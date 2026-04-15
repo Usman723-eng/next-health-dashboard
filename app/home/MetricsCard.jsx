@@ -28,6 +28,8 @@ const MetricsCard = ({ label, value, variant = 'green' }) => {
                 src={v.pattern}
                 alt='pattern'
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                loading='eager'
             />
             <div className="flex flex-col items-center gap-2">
                 <span

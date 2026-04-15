@@ -87,8 +87,8 @@ const Sidebar = () => {
                         const isActive = activeItem === item.id;
                         const commonProps = {
                             className: `
-                                flex flex-col items-center justify-center rounded-2xl w-[92px] h-20 transition-all duration-200 hover:bg-menu-hover hover:text-text-menu-hover 
-                                ${isActive ? 'bg-menu-selected! text-text-menu-selected!' : 'text-text-menu-default! bg-ransparent!'}
+                                flex flex-col items-center justify-center rounded-2xl w-[92px] h-20 transition-all duration-200 hover:bg-menu-hover/25 hover:text-text-menu-hover 
+                                ${isActive ? 'bg-menu-selected! text-text-menu-selected!' : 'text-text-menu-default! bg-ransparent'}
                             `,
                             onMouseEnter: e => {
                                 if (!isActive) {
@@ -106,7 +106,7 @@ const Sidebar = () => {
 
                         const content = (
                             <>
-                                <Icon name={isActive ? item.iconActive : item.icon} size={32} />
+                                <Icon name={isActive ? item.iconActive : item.icon} size={32} color='currentcolor' />
                                 <span className={`text-menu-collapsed-size ${isActive ? "font-medium" : "font-normal"}`}>
                                     {item.label}
                                 </span>
@@ -137,7 +137,7 @@ const Sidebar = () => {
             </div>
             {isExpanded && (
                 <div
-                    className="flex flex-col py-6 px-3 h-full overflow-y-auto flex-1 transition-all duration-300"
+                    className="hidden flex-col py-6 px-3 h-full overflow-y-auto flex-1 transition-all duration-300"
                     style={{
                         backgroundColor: 'var(--surface)',
                         borderRight: '1px solid var(--border)',

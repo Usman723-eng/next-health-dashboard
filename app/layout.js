@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider defaultTheme="light">
           <div className="flex h-screen">
             <Sidebar/>
-            <div className="flex-1">
+            <div className="flex-1 h-screen overflow-y-auto">
               {children}
             </div>
           </div>

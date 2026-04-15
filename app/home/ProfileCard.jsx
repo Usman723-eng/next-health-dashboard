@@ -10,11 +10,12 @@ const ProfileCard = ({ name, age, avatarSrc }) => {
         >
             <div className="flex shrink-0">
                 <Image
+                    className="rounded-full object-cover"
                     src={avatarSrc || '/assets/profile-image.png'}
                     alt={name}
                     width={96}
                     height={96}
-                    className="rounded-full object-cover"
+                    loading="eager"
                 />
             </div>
             <div className="flex flex-col gap-2">
