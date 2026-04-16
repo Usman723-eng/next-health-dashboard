@@ -28,6 +28,19 @@ import Movement from '@/public/assets/movement-icon.svg';
 import Nutrition from '@/public/assets/nutrition-icon.svg';
 import Recovery from '@/public/assets/recovery-icon.svg';
 import RegenerativeMedicine from '@/public/assets/regenerative-medicine-icon.svg';
+import BrainHealthLarge from '@/public/assets/brain-health-icon-large.svg';
+import DetoxificationLarge from '@/public/assets/detoxification-icon-large.svg';
+import EmotionalHealthLarge from '@/public/assets/emotional-health-icon-large.svg';
+import GutHealthLarge from '@/public/assets/gut-health-icon-large.svg';
+import HeartHealthLarge from '@/public/assets/heart-health-icon-large.svg';
+import HormoneHealthLarge from '@/public/assets/hormone-health-icon-large.svg';
+import ImmuneHealthLarge from '@/public/assets/immune-health-icon-large.svg';
+import LongevityLarge from '@/public/assets/longevity-icon-large.svg';
+import MovementLarge from '@/public/assets/movement-icon-large.svg';
+import NutritionLarge from '@/public/assets/nutrition-icon-large.svg';
+import RecoveryLarge from '@/public/assets/recovery-icon-large.svg';
+import RegenerativeMedicineLarge from '@/public/assets/regenerative-medicine-icon-large.svg';
+import SidebarCollapse from '@/public/assets/sidebar-expand-icon.svg';
 
 const icons = {
   'biomarkers-black': BiomarkersBlack,
@@ -58,6 +71,19 @@ const icons = {
   'nutrition': Nutrition,
   'recovery': Recovery,
   'regenerative-medicine': RegenerativeMedicine,
+  'brain-health-large': BrainHealthLarge,
+  'detoxification-large': DetoxificationLarge,
+  'emotional-health-large': EmotionalHealthLarge,
+  'gut-health-large': GutHealthLarge,
+  'heart-health-large': HeartHealthLarge,
+  'hormone-health-large': HormoneHealthLarge,
+  'immune-health-large': ImmuneHealthLarge,
+  'longevity-large': LongevityLarge,
+  'movement-large': MovementLarge,
+  'nutrition-large': NutritionLarge,
+  'recovery-large': RecoveryLarge,
+  'regenerative-medicine-large': RegenerativeMedicineLarge,
+  'sidebar-collapse': SidebarCollapse,
 };
 
 export default function Icon({ name, size = 24, color = 'currentColor', fill = 'none', className = '' }) {

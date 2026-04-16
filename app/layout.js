@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+
+import "./globals.css";
 
 const inter = Inter({
   variable: "--font-sans",

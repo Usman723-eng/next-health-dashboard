@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/icons';
@@ -16,22 +17,70 @@ const NAV_ITEMS = [
     {
         id: 'biomarkers',
         label: 'Biomarkers',
-        href: '/biomarkers',
+        href: '/biomarkers/nutrition',
         icon: 'biomarkers-gray',
         iconActive: 'biomarkers-primary',
         submenu: [
-            { label: 'Nutrition + Metabolic', href: '/biomarkers/nutrition' },
-            { label: 'Movement + Exercise', href: '/biomarkers/movement' },
-            { label: 'Sleep + Recovery', href: '/biomarkers/sleep' },
-            { label: 'Detoxification', href: '/biomarkers/detox' },
-            { label: 'Emotional Health + Stress', href: '/biomarkers/emotional' },
-            { label: 'Gut Health', href: '/biomarkers/gut' },
-            { label: 'Hormone Health', href: '/biomarkers/hormones' },
-            { label: 'Brain Health', href: '/biomarkers/brain' },
-            { label: 'Heart Health', href: '/biomarkers/heart' },
-            { label: 'Immune Health', href: '/biomarkers/immune' },
-            { label: 'Regenerative Medicine', href: '/biomarkers/regenerative' },
-            { label: 'Longevity', href: '/biomarkers/longevity' },
+            { 
+                label: 'Nutrition + Metabolic',     
+                href: '/biomarkers/nutrition',     
+                icon: 'nutrition'             
+            },
+            { 
+                label: 'Movement + Exercise',        
+                href: '/biomarkers/movement',      
+                icon: 'movement'              
+            },
+            { 
+                label: 'Sleep + Recovery',           
+                href: '/biomarkers/sleep',         
+                icon: 'recovery'              
+            },
+            { 
+                label: 'Detoxification',             
+                href: '/biomarkers/detox',         
+                icon: 'detoxification'        
+            },
+            { 
+                label: 'Emotional Health + Stress',  
+                href: '/biomarkers/emotional',     
+                icon: 'emotional-health'      
+            },
+            { 
+                label: 'Gut Health',                 
+                href: '/biomarkers/gut',           
+                icon: 'gut-health'            
+            },
+            { 
+                label: 'Hormone Health',             
+                href: '/biomarkers/hormones',      
+                icon: 'hormone-health'        
+            },
+            { 
+                label: 'Brain Health',               
+                href: '/biomarkers/brain',         
+                icon: 'brain-health'          
+            },
+            { 
+                label: 'Heart Health',               
+                href: '/biomarkers/heart',         
+                icon: 'heart-health'          
+            },
+            { 
+                label: 'Immune Health',              
+                href: '/biomarkers/immune',        
+                icon: 'immune-health'         
+            },
+            { 
+                label: 'Regenerative Medicine',      
+                href: '/biomarkers/regenerative',  
+                icon: 'regenerative-medicine' 
+            },
+            { 
+                label: 'Longevity',                  
+                href: '/biomarkers/longevity',     
+                icon: 'longevity'             
+            },
         ],
     },
     {
@@ -51,28 +100,73 @@ const NAV_ITEMS = [
 ];
 
 const Sidebar = () => {
+    const router = useRouter();
+    const pathname = usePathname();
     const [activeItem, setActiveItem] = useState('home');
     const [expandedItem, setExpandedItem] = useState(null);
+    const [isSubmenuCollapsed, setIsSubmenuCollapsed] = useState(false);
+    const [activeSubItem, setActiveSubItem] = useState(null);
 
-    const isExpanded = expandedItem !== null;
+    const isExpanded  = expandedItem !== null;
+    const expandedNav = NAV_ITEMS.find(i => i.id === expandedItem);
+
+    const activeItemFromPath = useMemo(() => {
+        if (!pathname) return null;
+        const match = NAV_ITEMS.find((item) => {
+            if (item.submenu?.length) {
+                return item.submenu.some((sub) => pathname.startsWith(sub.href));
+            }
+            return pathname === item.href || pathname.startsWith(`${item.href}/`);
+        });
+        return match?.id ?? null;
+    }, [pathname]);
+
+    useEffect(() => {
+        if (!activeItemFromPath) return;
+        setActiveItem(activeItemFromPath);
+    }, [activeItemFromPath]);
+
+    useEffect(() => {
+        if (!pathname) return;
+        
+        const biomarkersItem = NAV_ITEMS.find((i) => i.id === 'biomarkers');
+        const biomarkersSubMatch = biomarkersItem?.submenu?.find((sub) => pathname.startsWith(sub.href));
+
+        if (biomarkersSubMatch) {
+            setExpandedItem('biomarkers');
+            setActiveSubItem(biomarkersSubMatch.href);
+            return;
+        }
+
+        setExpandedItem(null);
+        setActiveSubItem(null);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (expandedItem === null) setIsSubmenuCollapsed(false);
+    }, [expandedItem]);
 
     const handleNavClick = (item) => {
         setActiveItem(item.id);
         if (item.submenu) {
-            setExpandedItem(expandedItem === item.id ? null : item.id);
+            const firstHref = item.submenu[0]?.href ?? item.href;
+            setExpandedItem(item.id);
+            setActiveSubItem(firstHref);
+            if (firstHref) router.push(firstHref);
         } else {
             setExpandedItem(null);
+            setActiveSubItem(null);
         }
     };
+
     return (
-        <div 
-            className={`
-                flex bg-surface border-r border-border transition-all duration-300 
-                ${isExpanded ? 'w-103' : 'w-27'}
-            `}
+        <div
+            className={`flex bg-surface transition-all duration-300 ${
+                isExpanded ? (isSubmenuCollapsed ? 'w-[176px]' : 'w-103') : 'w-27'
+            }`}
         >
-            <div className='flex flex-col gap-4 py-6 px-2 w-full max-w-27'>
-                <Link href="/" className='flex'>
+            <div className="flex flex-col gap-4 py-6 px-2 w-27 shrink-0 border-r border-border">
+                <Link href="/" className="flex">
                     <Image
                         className="rounded-2xl object-contain"
                         src="/assets/logo.png"
@@ -84,41 +178,30 @@ const Sidebar = () => {
                 </Link>
                 <nav className="flex flex-col gap-1">
                     {NAV_ITEMS.map((item) => {
-                        const isActive = activeItem === item.id;
-                        const commonProps = {
-                            className: `
-                                flex flex-col items-center justify-center rounded-2xl w-[92px] h-20 transition-all duration-200 hover:bg-menu-hover/25 hover:text-text-menu-hover 
-                                ${isActive ? 'bg-menu-selected! text-text-menu-selected!' : 'text-text-menu-default! bg-ransparent'}
-                            `,
-                            onMouseEnter: e => {
-                                if (!isActive) {
-                                    e.currentTarget.style.backgroundColor = 'var(--menu-hover)';
-                                    e.currentTarget.style.color = 'var(--text-menu-hover)';
-                                }
-                            },
-                            onMouseLeave: e => {
-                                if (!isActive) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = 'var(--text-menu-default)';
-                                }
-                            },
+                        const isActive  = activeItem === item.id;
+                        const baseClass = 'flex flex-col items-center justify-center rounded-2xl w-[92px] h-20 transition-all duration-200';
+                        const style = {
+                            backgroundColor: isActive ? 'var(--menu-selected)' : 'transparent',
+                            color: isActive ? 'var(--text-menu-selected)' : 'var(--text-menu-default)',
                         };
-
+                        const hoverOn  = e => { if (!isActive) { e.currentTarget.style.backgroundColor = 'var(--menu-hover)'; e.currentTarget.style.color = 'var(--text-menu-hover)'; } };
+                        const hoverOff = e => { if (!isActive) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-menu-default)'; } };
                         const content = (
                             <>
-                                <Icon name={isActive ? item.iconActive : item.icon} size={32} color='currentcolor' />
-                                <span className={`text-menu-collapsed-size ${isActive ? "font-medium" : "font-normal"}`}>
+                                <Icon name={isActive ? item.iconActive : item.icon} size={32} color="currentColor" />
+                                <span className={`text-menu-collapsed-size ${isActive ? 'font-medium' : 'font-normal'}`}>
                                     {item.label}
                                 </span>
                             </>
                         );
-
                         return item.submenu ? (
                             <button
                                 key={item.id}
                                 onClick={() => handleNavClick(item)}
-                                {...commonProps}
-                                className={`${commonProps.className} border-none cursor-pointer`}
+                                className={`${baseClass} border-none cursor-pointer`}
+                                style={style}
+                                onMouseEnter={hoverOn}
+                                onMouseLeave={hoverOff}
                             >
                                 {content}
                             </button>
@@ -127,7 +210,10 @@ const Sidebar = () => {
                                 key={item.id}
                                 href={item.href}
                                 onClick={() => handleNavClick(item)}
-                                {...commonProps}
+                                className={baseClass}
+                                style={style}
+                                onMouseEnter={hoverOn}
+                                onMouseLeave={hoverOff}
                             >
                                 {content}
                             </Link>
@@ -135,53 +221,75 @@ const Sidebar = () => {
                     })}
                 </nav>
             </div>
-            {isExpanded && (
+            {isExpanded && expandedNav?.submenu && (
                 <div
-                    className="hidden flex-col py-6 px-3 h-full overflow-y-auto flex-1 transition-all duration-300"
-                    style={{
-                        backgroundColor: 'var(--surface)',
-                        borderRight: '1px solid var(--border)',
-                    }}
+                    className={`flex flex-col gap-2 h-full overflow-y-auto transition-all duration-300 ${
+                        isSubmenuCollapsed ? 'py-6 px-2 w-[68px]' : 'py-6 px-3 flex-1'
+                    }`}
                 >
-                    <div className="flex items-center justify-between mb-4 px-2">
-                        <span
-                            className="text-fs-menu text-primary font-semibold"
-                        >
-                            Next Health
-                        </span>
+                    <div className="flex items-center justify-between gap-2">
+                        {!isSubmenuCollapsed && (
+                            <span className="text-menu-size leading-7.5 font-bold text-primary">Next Health</span>
+                        )}
                         <button
-                            onClick={() => setExpandedItem(null)}
-                            className="cursor-pointer border-none bg-transparent p-1 rounded-lg"
+                            onClick={() => setIsSubmenuCollapsed((v) => !v)}
+                            className={`
+                                flex items-center justify-center cursor-pointer text-primary border-none bg-transparent p-1 rounded-md transition-colors
+                                ${isSubmenuCollapsed ? 'w-full h-12' : 'w-auto h-auto'}
+                            `}
+                            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--menu-hover)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            aria-label={isSubmenuCollapsed ? 'Expand submenu' : 'Collapse submenu'}
                         >
-                            ✕
+                            <Icon name="sidebar-collapse" size={24} color="currentColor" fill="currentColor" />
                         </button>
                     </div>
-
-                    {/* Submenu items */}
-                    <nav className="flex flex-col gap-1">
-                        {NAV_ITEMS.find(i => i.id === expandedItem)?.submenu?.map((sub, idx) => (
-                            <Link
-                                key={idx}
-                                href={sub.href}
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 no-underline"
-                                style={{ color: 'var(--text-menu-default)', fontSize: 'var(--fs-menu)' }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.backgroundColor = 'var(--menu-hover)';
-                                    e.currentTarget.style.color = 'var(--text-menu-hover)';
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = 'var(--text-menu-default)';
-                                }}
-                            >
-                                {sub.label}
-                            </Link>
-                        ))}
+                    <nav className="flex flex-col gap-2">
+                        {expandedNav.submenu.map((sub) => {
+                            const isSubActive = activeSubItem === sub.href;
+                            return (
+                                <Link
+                                    key={sub.href}
+                                    href={sub.href}
+                                    onClick={() => setActiveSubItem(sub.href)}
+                                    className={`flex items-center rounded-lg transition-all duration-200 no-underline ${
+                                        isSubmenuCollapsed ? 'justify-center px-2 py-3' : 'gap-2 px-2 py-3'
+                                    }`}
+                                    style={{
+                                        backgroundColor: isSubActive
+                                            ? 'color-mix(in srgb, var(--brand-color) 10%, transparent)'
+                                            : 'transparent',
+                                        color: isSubActive
+                                            ? 'var(--text-menu-selected)'
+                                            : 'var(--text-menu-default)',
+                                    }}
+                                    onMouseEnter={e => {
+                                        if (!isSubActive) {
+                                            e.currentTarget.style.backgroundColor = 'var(--menu-hover)';
+                                            e.currentTarget.style.color = 'var(--text-menu-hover)';
+                                        }
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (!isSubActive) {
+                                            e.currentTarget.style.backgroundColor = 'transparent';
+                                            e.currentTarget.style.color = 'var(--text-menu-default)';
+                                        }
+                                    }}
+                                >
+                                    <Icon name={sub.icon} size={24} color="currentColor" />
+                                    {!isSubmenuCollapsed && (
+                                        <span className={`text-menu-size ${isSubActive ? 'font-semibold' : 'font-normal'}`}>
+                                            {sub.label}
+                                        </span>
+                                    )}
+                                </Link>
+                            );
+                        })}
                     </nav>
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default Sidebar
+export default Sidebar;

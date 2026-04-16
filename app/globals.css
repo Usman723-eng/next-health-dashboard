@@ -16,7 +16,7 @@
     --raw-green-500: #059669;
     --raw-green-700: #047857;
     /* Negative / Error */
-    --raw-red-100: #fee2e2;
+    --raw-red-100: #FEF2F2;
     --raw-red-500: #dc2626;
     --raw-red-700: #b91c1c;
     /* Warning */
@@ -25,14 +25,14 @@
     --raw-yellow-700: #d97706;
     /* ── Health Area Accents (fixed — same across ALL themes) ── */
     --accent-grey: #64748b;
-    --accent-fuchsia: #c02603;
-    --accent-purple: #6821a8;
-    --accent-blue: #104ed8;
+    --accent-fuchsia: #C026D3;
+    --accent-purple: #6B21A8;
+    --accent-blue: #1D4ED8;
     --accent-teal: #0f766e;
     --accent-lime: #65a30d;
     --accent-yellow: #eab308;
     --accent-amber: #d97706;
-    --accent-orange: #ea580c;
+    --accent-orange: #D97706;
     --accent-red: #b91c1c;
     --accent-bg-grey: #fafaf9;
     --accent-bg-fuchsia: #fdf4ff;
@@ -94,6 +94,9 @@
     --brand-color: var(--raw-purple-500);
     --border: #ECEDED;
     --border2: #D1D1D1;
+    --tertiary-color: #767680;
+    --tab-text-color: #1C1917;
+    --tabs-active-bg: #2B1760;
     /* Navigation / Menu */
     --menu-background: #ffffff;
     --menu-selected: #f5f5f4;
@@ -113,8 +116,8 @@
     --color-neutral-soft: #f5f5f4;
     --color-negative: var(--raw-red-500);
     --color-negative-soft: var(--raw-red-100);
-    --color-warning: var(--raw-yellow-500);
-    --color-warning-soft: var(--raw-yellow-100);
+    --color-warning: #EA580C;
+    --color-warning-soft: #FFEDD5;
 }
 [data-theme="dark"] {
     /* Layout */
@@ -215,6 +218,9 @@
     --color-brand: var(--brand-color);
     --color-border: var(--border);
     --color-border2: var(--border2);
+    --color-tertiary-color: var(--tertiary-color);
+    --color-tab-text-color: var(--tab-text-color);
+    --color-tabs-active-bg: var(--tabs-active-bg);
     --color-primary: var(--text-primary);
     --color-secondary: var(--text-secondary);
     --color-on-color: var(--text-on-color);

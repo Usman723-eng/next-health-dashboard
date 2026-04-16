@@ -13,9 +13,9 @@ const MetricsCard2 = ({ title, value, label, score, date = 'Apr 9', icon, iconBg
                 <div className="flex items-center gap-2">
                     <div
                         className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: iconBg }}
+                        style={{ backgroundColor: iconBg, color: '#ffffff' }}
                     >
-                        <Icon name={icon} size={24} color="#ffffff" />
+                        <Icon name={icon} size={24} color="currentColor" />
                     </div>
                     <span className="text-card-header-size leading-7.5 font-semibold text-primary">
                         {title}

@@ -9,10 +9,10 @@ function HealthAreaList({ items = [] }) {
     <div key={item.id} className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-2">
         <div
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+          className="text-white flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
           style={{ backgroundColor: item.color }}
         >
-          <Icon name={item.icon} size={24} color="#ffffff" />
+          <Icon name={item.icon} size={24} color="currentcolor" />
         </div>
         <span className="text-metric-size font-normal text-primary">{item.label}</span>
       </div>
