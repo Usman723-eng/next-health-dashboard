@@ -20,7 +20,7 @@ const MetricsCard = ({ label, value, variant = 'green' }) => {
     const v = variants[variant] || variants.green;
     return (
         <div
-            className="relative flex flex-col items-center justify-center rounded-3xl p-5 h-full overflow-hidden"
+            className="relative flex flex-col items-center justify-center rounded-3xl py-1.5 px-2 h-full overflow-hidden"
             style={{ background: v.bg }}
         >
             <Image
@@ -31,15 +31,15 @@ const MetricsCard = ({ label, value, variant = 'green' }) => {
                 sizes="(max-width: 768px) 100vw, 50vw"
                 loading='eager'
             />
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center">
                 <span
-                    className="font-bold leading-none"
+                    className="font-bold leading-[100%]"
                     style={{ fontSize: 'var(--fs-hero-metric)', color: v.valueColor }}
                 >
                     {value}
                 </span>
                 <span
-                    className="font-medium tracking-wide"
+                    className="font-medium leading-[100%]"
                     style={{ fontSize: 'var(--fs-hero-subtext)', color: v.labelColor }}
                 >
                     {label}

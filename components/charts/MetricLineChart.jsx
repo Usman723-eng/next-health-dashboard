@@ -13,6 +13,23 @@ import {
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler);
 
+const NAVY = '#172645';
+
+function xPixelForCategoryIndex(chart, xIndex) {
+  const labels = chart.data.labels || [];
+  if (!labels.length || !Number.isFinite(xIndex)) return null;
+  const xScale = chart.scales.x;
+  const max = labels.length - 1;
+  if (max < 0) return null;
+  if (xIndex <= 0) return xScale.getPixelForValue(labels[0]);
+  if (xIndex >= max) return xScale.getPixelForValue(labels[max]);
+  const i = Math.floor(xIndex);
+  const f = xIndex - i;
+  const p0 = xScale.getPixelForValue(labels[i]);
+  const p1 = xScale.getPixelForValue(labels[Math.min(i + 1, max)]);
+  return p0 + f * (p1 - p0);
+}
+
 const rangeBandPlugin = {
   id: 'rangeBand',
   beforeDatasetsDraw(chart) {
@@ -24,7 +41,7 @@ const rangeBandPlugin = {
     const {
       min,
       max,
-      color = '#D1FAE5',
+      color = '#737373',
       borderColor = '#26D76A',
       borderWidth = 1,
     } = band;
@@ -41,7 +58,6 @@ const rangeBandPlugin = {
     ctx.fillStyle = color;
     ctx.fillRect(chartArea.left, yTop, chartArea.right - chartArea.left, yBot - yTop);
 
-    // top + bottom borders for the green range band
     ctx.beginPath();
     ctx.strokeStyle = borderColor;
     ctx.lineWidth = borderWidth;
@@ -56,6 +72,65 @@ const rangeBandPlugin = {
   },
 };
 
+/** Vertical reference line + pill label (optional). */
+const interventionLinePlugin = {
+  id: 'interventionLine',
+  afterDatasetsDraw(chart) {
+    const intervention = chart.options.plugins?.intervention;
+    if (!intervention?.label || !Number.isFinite(intervention.xIndex)) return;
+
+    const x = xPixelForCategoryIndex(chart, intervention.xIndex);
+    if (x == null) return;
+
+    const { ctx, chartArea } = chart;
+    const label = String(intervention.label);
+    const paddingX = 10;
+    const paddingY = 6;
+    const font = '600 12px Inter, system-ui, sans-serif';
+    ctx.save();
+    ctx.font = font;
+    const textW = ctx.measureText(label).width;
+    const badgeW = textW + paddingX * 2;
+    const badgeH = paddingY * 2 + 14;
+    const gap = 4;
+
+    ctx.strokeStyle = NAVY;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(Math.round(x) + 0.5, chartArea.top);
+    ctx.lineTo(Math.round(x) + 0.5, chartArea.bottom);
+    ctx.stroke();
+
+    const badgeY = chartArea.top - gap - badgeH;
+    const badgeX = x - badgeW / 2;
+    ctx.fillStyle = NAVY;
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 6);
+    } else {
+      ctx.rect(badgeX, badgeY, badgeW, badgeH);
+    }
+    ctx.fill();
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, badgeY + badgeH / 2);
+    ctx.restore();
+  },
+};
+
+/**
+ * @param {object} props
+ * @param {string[]} props.months
+ * @param {number[]} props.optimal
+ * @param {number[]} props.warning
+ * @param {number[]} props.critical
+ * @param {number} props.optimalThreshold
+ * @param {number} props.criticalThreshold
+ * @param {{ series: Array<{ label: string, color: string, values: number[] }> }} [props.multiSeries]
+ * @param {{ label: string, xIndex: number } | null} [props.intervention] Vertical marker + badge; omit for default charts.
+ */
 const MetricLineChart = ({
   months,
   optimal,
@@ -63,16 +138,83 @@ const MetricLineChart = ({
   critical,
   optimalThreshold,
   criticalThreshold,
+  multiSeries = null,
+  intervention = null,
 }) => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
+
+  const interventionKey =
+    intervention?.label != null && Number.isFinite(intervention?.xIndex)
+      ? `${intervention.label}:${intervention.xIndex}`
+      : '';
 
   useEffect(() => {
     if (!canvasRef.current) return;
     if (chartRef.current) chartRef.current.destroy();
 
+    const labels = months ?? [];
+
+    const interventionOpts =
+      intervention?.label && Number.isFinite(intervention.xIndex)
+        ? { label: intervention.label, xIndex: intervention.xIndex }
+        : undefined;
+
+    if (multiSeries?.series?.length) {
+      const allVals = multiSeries.series.flatMap((s) => (s.values ?? []).map(Number)).filter(Number.isFinite);
+      const dataMax = allVals.length ? Math.max(...allVals) : 0;
+      const dataMin = allVals.length ? Math.min(...allVals) : 0;
+      const pad = (dataMax - dataMin) * 0.15 || 1;
+
+      chartRef.current = new Chart(canvasRef.current, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: multiSeries.series.map((s) => ({
+            label: s.label,
+            data: (s.values ?? []).map((v) => Number(v)),
+            borderColor: s.color,
+            backgroundColor: s.color,
+            borderWidth: 2,
+            tension: 0.45,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            fill: false,
+          })),
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: interventionOpts ? 36 : 0 } },
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true },
+            intervention: interventionOpts,
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: { color: '#737373', font: { size: 12 } },
+            },
+            y: {
+              grid: { color: 'rgba(120, 113, 108, 0.12)' },
+              border: { display: false },
+              ticks: { display: false },
+              min: dataMin - pad,
+              max: dataMax + pad,
+            },
+          },
+        },
+        plugins: [interventionLinePlugin],
+      });
+
+      return () => chartRef.current?.destroy();
+    }
+
     const totals = (months || []).map((_, i) =>
-      Number(optimal?.[i] ?? 0) + Number(warning?.[i] ?? 0) + Number(critical?.[i] ?? 0)
+      Number(optimal?.[i] ?? 0) + Number(warning?.[i] ?? 0) + Number(critical?.[i] ?? 0),
     );
 
     const values = totals.filter((n) => Number.isFinite(n));
@@ -95,6 +237,7 @@ const MetricLineChart = ({
           {
             label: 'Metric',
             data: totals,
+            color: '#737373',
             borderColor: '#0F172A',
             borderWidth: 2,
             tension: 0.45,
@@ -107,6 +250,7 @@ const MetricLineChart = ({
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: interventionOpts ? 36 : 0 } },
         plugins: {
           legend: { display: false },
           tooltip: { enabled: false },
@@ -114,12 +258,13 @@ const MetricLineChart = ({
             Number.isFinite(t1) && Number.isFinite(t2)
               ? { min: t1, max: t2, color: 'rgba(34, 197, 94, 0.14)' }
               : undefined,
+          intervention: interventionOpts,
         },
         scales: {
           x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { color: '#e5e5e5', font: { size: 12 }},
+            ticks: { color: '#737373', font: { size: 12 }},
           },
           y: {
             grid: { color: 'rgba(120, 113, 108, 0.12)' },
@@ -130,14 +275,23 @@ const MetricLineChart = ({
           },
         },
       },
-      plugins: [rangeBandPlugin],
+      plugins: [rangeBandPlugin, interventionLinePlugin],
     });
 
     return () => chartRef.current?.destroy();
-  }, [months, optimal, warning, critical, optimalThreshold, criticalThreshold]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- interventionKey encodes intervention.label + xIndex
+  }, [
+    months,
+    optimal,
+    warning,
+    critical,
+    optimalThreshold,
+    criticalThreshold,
+    multiSeries,
+    interventionKey,
+  ]);
 
   return <canvas ref={canvasRef} />;
 };
 
 export default MetricLineChart;
-

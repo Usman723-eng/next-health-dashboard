@@ -6,6 +6,7 @@ import { Chart, BarController, BarElement, LinearScale, CategoryScale } from 'ch
 Chart.register(BarController, BarElement, LinearScale, CategoryScale);
 
 const BAR_RADIUS = 5;
+const BAR_RADIUS_COMPACT = 3;
 const LEFT_GUTTER_PX = 76;
 
 const referenceLinePlugin = {
@@ -44,13 +45,24 @@ const referenceLinePlugin = {
   },
 };
 
-const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold, criticalThreshold }) => {
+const StackedBarChart = ({
+  months,
+  optimal,
+  warning,
+  critical,
+  optimalThreshold,
+  criticalThreshold,
+  compact = false,
+}) => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
     if (chartRef.current) chartRef.current.destroy();
+
+    const barR = compact ? BAR_RADIUS_COMPACT : BAR_RADIUS;
+    const barThick = compact ? 6 : 56;
 
     const stacks = [optimal, warning, critical];
     const outerRadiusFor = (datasetIndex, dataIndex) => {
@@ -68,15 +80,15 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
       const isTop = datasetIndex === topIdx;
 
       if (isTop && isBottom) {
-        return BAR_RADIUS;
+        return { topLeft: barR, topRight: barR, bottomLeft: 0, bottomRight: 0 };
       }
 
       if (isTop) {
-        return { topLeft: BAR_RADIUS, topRight: BAR_RADIUS, bottomLeft: 0, bottomRight: 0 };
+        return { topLeft: barR, topRight: barR, bottomLeft: 0, bottomRight: 0 };
       }
 
       if (isBottom) {
-        return { topLeft: 0, topRight: 0, bottomLeft: BAR_RADIUS, bottomRight: BAR_RADIUS };
+        return { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
       }
 
       return 0;
@@ -88,6 +100,7 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
     const dataMax = totals.length ? Math.max(...totals) : 0;
     const thresholdMax = Math.max(Number(optimalThreshold ?? 0), Number(criticalThreshold ?? 0));
     const yMax = Math.max(dataMax, thresholdMax);
+    const yScaleMax = compact ? Math.max(yMax * 2.35, 100) : yMax;
 
     chartRef.current = new Chart(canvasRef.current, {
       type: 'bar',
@@ -103,8 +116,8 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
             borderSkipped: false,
             borderWidth: 0,
             borderColor: '#059669',
-            barThickness: 56,
-            maxBarThickness: 56,
+            barThickness: barThick,
+            maxBarThickness: barThick,
           },
           {
             label: 'Warning',
@@ -115,8 +128,8 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
             borderSkipped: false,
             borderWidth: 0,
             borderColor: '#EA580C',
-            barThickness: 56,
-            maxBarThickness: 56,
+            barThickness: barThick,
+            maxBarThickness: barThick,
           },
           {
             label: 'Critical',
@@ -127,8 +140,8 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
             borderSkipped: false,
             borderWidth: 0,
             borderColor: '#DC2626',
-            barThickness: 56,
-            maxBarThickness: 56,
+            barThickness: barThick,
+            maxBarThickness: barThick,
           },
         ],
       },
@@ -143,21 +156,25 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
         plugins: {
           legend: { display: false },
           tooltip: { enabled: false },
-          refLines: {
-            lines: [
-              { value: criticalThreshold, label: 'Critical' },
-              { value: optimalThreshold, label: 'Optimal' },
-            ],
-          },
+          refLines: compact
+            ? { lines: [] }
+            : {
+                lines: [
+                  { value: criticalThreshold, label: 'Critical' },
+                  { value: optimalThreshold, label: 'Optimal' },
+                ],
+              },
         },
         scales: {
           x: {
             stacked: true,
             grid: { display: false },
             border: { display: false },
-            ticks: { color: '#78716C', font: { size: 14 }, padding: 8 },
-            categoryPercentage: 0.74,
-            barPercentage: 0.98,
+            ticks: compact
+              ? { display: false }
+              : { color: '#78716C', font: { size: 14 }, padding: 8 },
+            categoryPercentage: compact ? 0.8 : 0.74,
+            barPercentage: compact ? 0.9 : 0.98,
           },
           y: {
             stacked: true,
@@ -165,16 +182,18 @@ const StackedBarChart = ({ months, optimal, warning, critical, optimalThreshold,
             border: { display: false },
             ticks: { display: false },
             beginAtZero: true,
-            suggestedMax: yMax,
+            ...(compact
+              ? { max: yScaleMax }
+              : { suggestedMax: yMax }),
           },
         },
-        layout: { padding: { left: LEFT_GUTTER_PX } },
+        layout: { padding: { left: compact ? 0 : LEFT_GUTTER_PX } },
       },
-      plugins: [referenceLinePlugin],
+      plugins: compact ? [] : [referenceLinePlugin],
     });
 
     return () => chartRef.current?.destroy();
-  }, [months, optimal, warning, critical, optimalThreshold, criticalThreshold]);
+  }, [months, optimal, warning, critical, optimalThreshold, criticalThreshold, compact]);
 
   return <canvas ref={canvasRef} />;
 };

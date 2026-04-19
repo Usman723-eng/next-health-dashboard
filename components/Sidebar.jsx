@@ -5,6 +5,28 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/icons';
+import { BIOMARKER_LAB_SLUGS } from '@/app/lib/biomarkerLabs';
+
+function matchesSubmenuPath(pathname, sub) {
+    if (!pathname || !sub?.href) return false;
+    if (sub.href === '/biomarkers') {
+        if (pathname === '/biomarkers') return true;
+        const m = pathname.match(/^\/biomarkers\/([^/]+)$/);
+        return m ? BIOMARKER_LAB_SLUGS.includes(m[1]) : false;
+    }
+    return pathname === sub.href || pathname.startsWith(`${sub.href}/`);
+}
+
+function findActiveSubmenu(pathname, submenu) {
+    if (!submenu?.length) return null;
+    const withoutAll = submenu.filter((s) => s.href !== '/biomarkers');
+    const sorted = [...withoutAll].sort((a, b) => b.href.length - a.href.length);
+    const areaMatch = sorted.find((sub) => matchesSubmenuPath(pathname, sub));
+    if (areaMatch) return areaMatch;
+    const allBio = submenu.find((s) => s.href === '/biomarkers');
+    if (allBio && matchesSubmenuPath(pathname, allBio)) return allBio;
+    return null;
+}
 
 const NAV_ITEMS = [
     {
@@ -17,69 +39,89 @@ const NAV_ITEMS = [
     {
         id: 'biomarkers',
         label: 'Biomarkers',
-        href: '/biomarkers/nutrition',
+        href: '/biomarkers',
         icon: 'biomarkers-gray',
         iconActive: 'biomarkers-primary',
         submenu: [
-            { 
-                label: 'Nutrition + Metabolic',     
-                href: '/biomarkers/nutrition',     
-                icon: 'nutrition'             
+            {
+                label: 'All',
+                href: '/biomarkers',
+                icon: 'all-biomarkers-grid',
             },
-            { 
-                label: 'Movement + Exercise',        
-                href: '/biomarkers/movement',      
-                icon: 'movement'              
+            {
+                label: 'Nutrition',
+                href: '/biomarkers/nutrition',
+                icon: 'nutrition',
             },
-            { 
-                label: 'Sleep + Recovery',           
-                href: '/biomarkers/sleep',         
-                icon: 'recovery'              
+            {
+                label: 'Metabolic Health',
+                href: '/biomarkers/metabolic',
+                icon: 'metabolic',
             },
-            { 
-                label: 'Detoxification',             
-                href: '/biomarkers/detox',         
-                icon: 'detoxification'        
+            {
+                label: 'Sleep and Recovery',
+                href: '/biomarkers/sleep',
+                icon: 'recovery',
             },
-            { 
-                label: 'Emotional Health + Stress',  
-                href: '/biomarkers/emotional',     
-                icon: 'emotional-health'      
+            {
+                label: 'Physical Fitness',
+                href: '/biomarkers/movement',
+                icon: 'movement',
             },
-            { 
-                label: 'Gut Health',                 
-                href: '/biomarkers/gut',           
-                icon: 'gut-health'            
+            {
+                label: 'Emotional Health + Stress',
+                href: '/biomarkers/emotional',
+                icon: 'emotional-health',
             },
-            { 
-                label: 'Hormone Health',             
-                href: '/biomarkers/hormones',      
-                icon: 'hormone-health'        
+            {
+                label: 'Toxin Exposure',
+                href: '/biomarkers/toxin-exposure',
+                icon: 'toxin-exposure',
             },
-            { 
-                label: 'Brain Health',               
-                href: '/biomarkers/brain',         
-                icon: 'brain-health'          
+            {
+                label: 'Liver and Kidney Health',
+                href: '/biomarkers/liver-kidney',
+                icon: 'liver-kidney',
             },
-            { 
-                label: 'Heart Health',               
-                href: '/biomarkers/heart',         
-                icon: 'heart-health'          
+            {
+                label: 'Hormone Health',
+                href: '/biomarkers/hormones',
+                icon: 'hormone-health',
             },
-            { 
-                label: 'Immune Health',              
-                href: '/biomarkers/immune',        
-                icon: 'immune-health'         
+            {
+                label: 'Gut Health',
+                href: '/biomarkers/gut',
+                icon: 'gut-health',
             },
-            { 
-                label: 'Regenerative Medicine',      
-                href: '/biomarkers/regenerative',  
-                icon: 'regenerative-medicine' 
+            {
+                label: 'Inflammation',
+                href: '/biomarkers/inflammation',
+                icon: 'inflammation',
             },
-            { 
-                label: 'Longevity',                  
-                href: '/biomarkers/longevity',     
-                icon: 'longevity'             
+            {
+                label: 'CV (Heart) Health',
+                href: '/biomarkers/heart',
+                icon: 'heart-health',
+            },
+            {
+                label: 'Immune Health',
+                href: '/biomarkers/immune',
+                icon: 'immune-health',
+            },
+            {
+                label: 'Cancer Prevention',
+                href: '/biomarkers/regenerative',
+                icon: 'regenerative-medicine',
+            },
+            {
+                label: 'Brain Health',
+                href: '/biomarkers/brain',
+                icon: 'brain-health',
+            },
+            {
+                label: 'Longevity',
+                href: '/biomarkers/longevity',
+                icon: 'longevity',
             },
         ],
     },
@@ -87,6 +129,13 @@ const NAV_ITEMS = [
         id: 'health-plan',
         label: 'Health Plan',
         href: '/health-plan',
+        icon: 'health-plan-gray',
+        iconActive: 'health-plan-primary',
+    },
+    {
+        id: 'records',
+        label: 'Records',
+        href: '/records',
         icon: 'health-plan-gray',
         iconActive: 'health-plan-primary',
     },
@@ -114,9 +163,10 @@ const Sidebar = () => {
         if (!pathname) return null;
         const match = NAV_ITEMS.find((item) => {
             if (item.submenu?.length) {
-                return item.submenu.some((sub) => pathname.startsWith(sub.href));
+                if (item.id === 'biomarkers' && pathname.startsWith('/biomarkers')) return true;
+                return item.submenu.some((sub) => matchesSubmenuPath(pathname, sub));
             }
-            return pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return pathname === item.href || (item.href !== '/' && pathname.startsWith(`${item.href}/`));
         });
         return match?.id ?? null;
     }, [pathname]);
@@ -130,11 +180,10 @@ const Sidebar = () => {
         if (!pathname) return;
         
         const biomarkersItem = NAV_ITEMS.find((i) => i.id === 'biomarkers');
-        const biomarkersSubMatch = biomarkersItem?.submenu?.find((sub) => pathname.startsWith(sub.href));
-
-        if (biomarkersSubMatch) {
+        if (pathname.startsWith('/biomarkers')) {
             setExpandedItem('biomarkers');
-            setActiveSubItem(biomarkersSubMatch.href);
+            const biomarkersSubMatch = findActiveSubmenu(pathname, biomarkersItem?.submenu);
+            setActiveSubItem(biomarkersSubMatch?.href ?? null);
             return;
         }
 
@@ -162,7 +211,7 @@ const Sidebar = () => {
     return (
         <div
             className={`flex bg-surface transition-all duration-300 ${
-                isExpanded ? (isSubmenuCollapsed ? 'w-[176px]' : 'w-103') : 'w-27'
+                isExpanded ? (isSubmenuCollapsed ? 'w-44' : 'w-103') : 'w-27'
             }`}
         >
             <div className="flex flex-col gap-4 py-6 px-2 w-27 shrink-0 border-r border-border">
@@ -224,7 +273,7 @@ const Sidebar = () => {
             {isExpanded && expandedNav?.submenu && (
                 <div
                     className={`flex flex-col gap-2 h-full overflow-y-auto transition-all duration-300 ${
-                        isSubmenuCollapsed ? 'py-6 px-2 w-[68px]' : 'py-6 px-3 flex-1'
+                        isSubmenuCollapsed ? 'py-6 px-2 w-17' : 'py-6 px-3 flex-1'
                     }`}
                 >
                     <div className="flex items-center justify-between gap-2">

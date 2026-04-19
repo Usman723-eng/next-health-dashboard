@@ -1,12 +1,29 @@
-const MONTHS = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+import { SCORING_SECTIONS_BY_SLUG } from '@/app/lib/scoringSectionsBySlug';
+import { BIOMARKER_WEARABLE_SECTIONS_BY_SLUG } from '@/app/lib/biomarkerWearableSectionsBySlug';
+
+export const MONTHS = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
 
 const SUMMARY = 'Your health score is currently showing some areas of concern. At this time, some of the tracked indicators are performing below optimal levels, and several biomarkers fall outside the recommended range. This suggests potential inconsistencies in your current health factors.';
 
-export const METRICS = [
+const HR_CLINICIAN_LINE =
+  'Work with your clinician to interpret these results in the context of your full history and goals.';
+const HR_RETEST_LINE =
+  'Retesting on the schedule your care team recommends helps confirm trends and adjust your plan.';
+
+/** Card body (shown twice in the card) + modal lines for `/biomarkers/[slug]` Health Recommendation. */
+function healthRecommendationFromBody(cardBody, modalSubtitle) {
+  return {
+    paragraphs: [cardBody, cardBody],
+    modalSubtitle,
+    modalContent: [cardBody, HR_CLINICIAN_LINE, HR_RETEST_LINE],
+  };
+}
+
+const METRICS_DATA = [
   {
     id: 1,
     slug: 'movement',
-    title: 'Weekly activity balance',
+    title: 'Physical Fitness',
     value: 85,
     label: 'Weekly activity score',
     score: 1,
@@ -36,13 +53,17 @@ export const METRICS = [
       { title: 'Biomarkers', value: '8', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
       { title: 'Activity Score', value: '3', subtitle: 'Needs Attention', badge: 'Low', type: 'warning' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Physical Fitness score highlights how well your daily movement, training, and recovery are supporting your health. When tracked indicators fall short of optimal levels, it may reflect inconsistent activity, recovery debt, or load management worth reviewing with your care team.',
+      'Physical Fitness: next steps',
+    ),
   },
   {
     id: 2,
     slug: 'heart',
-    title: 'Cardiovascular efficiency',
+    title: 'CV (Heart) Health',
     value: 76,
-    label: 'Cardiovascular score',
+    label: 'Heart health score',
     score: 1,
     icon: 'heart-health',
     iconBg: '#E51C29',
@@ -70,11 +91,15 @@ export const METRICS = [
       { title: 'Biomarkers', value: '4.2', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
       { title: 'Biomarkers', value: '8', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your CV (Heart) Health score reflects how cardiovascular strain, rhythm, and recovery are trending. If several markers sit outside the ideal range, it may point to stress on the heart and vessels that should be reviewed alongside your clinician.',
+      'CV (Heart) Health: clinical context',
+    ),
   },
   {
     id: 3,
     slug: 'sleep',
-    title: 'Recovery efficiency',
+    title: 'Sleep and Recovery',
     value: 46,
     label: 'Recovery score',
     score: 1,
@@ -104,13 +129,17 @@ export const METRICS = [
       { title: 'Sleep Score', value: '4.2', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
       { title: 'HRV', value: '2.8', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Sleep and Recovery score reflects how restful sleep and autonomic balance are supporting repair and stress regulation. When recovery metrics underperform, it often links to irregular sleep, stress load, or training timing—priorities to address with your team.',
+      'Sleep and Recovery: priorities',
+    ),
   },
   {
     id: 4,
     slug: 'brain',
-    title: 'Mental clarity',
+    title: 'Brain Health',
     value: 56,
-    label: 'Mental clarity score',
+    label: 'Brain health score',
     score: 1,
     icon: 'brain-health',
     iconBg: '#DE2ED7',
@@ -138,6 +167,10 @@ export const METRICS = [
       { title: 'Stress Level', value: '7', subtitle: 'Needs Attention', badge: 'Out of Range', type: 'warning' },
       { title: 'Focus', value: '3', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Brain Health score captures how focus, stress load, and cognitive resilience are tracking. Several indicators outside the optimal band may suggest attention to sleep, stress, and mental load that your clinician can help interpret.',
+      'Brain Health: focus areas',
+    ),
   },
   {
     id: 5,
@@ -172,6 +205,10 @@ export const METRICS = [
       { title: 'Biomarkers', value: '8/10', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
       { title: 'Stress Index', value: '9', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Emotional Health + Stress score reflects how stress physiology and mood-related signals are tracking. When readings are below optimal, it may indicate elevated strain or recovery gaps worth exploring in your care plan.',
+      'Emotional Health + Stress: support',
+    ),
   },
   {
     id: 6,
@@ -206,6 +243,10 @@ export const METRICS = [
       { title: 'Cortisol', value: '4.2', subtitle: 'Needs Attention', badge: 'Out of Range', type: 'warning' },
       { title: 'Biomarkers', value: '2', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Hormone Health score reflects how endocrine balance may be influencing energy, stress, and metabolism. Several biomarkers outside the recommended range can signal patterns that deserve individualized interpretation with your clinician.',
+      'Hormone Health: interpretation',
+    ),
   },
   {
     id: 7,
@@ -240,13 +281,17 @@ export const METRICS = [
       { title: 'Biomarkers', value: '3', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
       { title: 'Immune Score', value: '7', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Immune Health score reflects how inflammatory and immune-related markers are tracking. When multiple indicators are suboptimal, it may suggest immune stress, recovery needs, or follow-up testing to clarify the pattern.',
+      'Immune Health: follow-up',
+    ),
   },
   {
     id: 8,
     slug: 'regenerative',
-    title: 'Regenerative Medicine',
+    title: 'Cancer Prevention',
     value: 44,
-    label: 'Regenerative score',
+    label: 'Prevention score',
     score: 1,
     icon: 'regenerative-medicine',
     iconBg: '#FF3083',
@@ -274,11 +319,15 @@ export const METRICS = [
       { title: 'Inflammation', value: '4.2', subtitle: 'Needs Attention', badge: 'Out of Range', type: 'warning' },
       { title: 'Biomarkers', value: '2', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Cancer Prevention score summarizes protective and regenerative signals from your labs. When tracked indicators are not optimal, it highlights opportunities for screening focus, inflammation control, and lifestyle alignment with your clinician.',
+      'Cancer Prevention: protective focus',
+    ),
   },
   {
     id: 9,
     slug: 'longevity',
-    title: 'Long-term health outlook',
+    title: 'Longevity',
     value: 69,
     label: 'Longevity score',
     score: 1,
@@ -308,11 +357,15 @@ export const METRICS = [
       { title: 'Biomarkers', value: '8', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
       { title: 'Longevity', value: '5', subtitle: 'Needs Attention', badge: 'Low', type: 'warning' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Longevity score reflects how key aging and vitality markers are trending over time. Several biomarkers outside the ideal range may point to areas—metabolic health, inflammation, and recovery—worth prioritizing in your plan.',
+      'Longevity: long-term focus',
+    ),
   },
   {
     id: 10,
     slug: 'nutrition',
-    title: 'Nutrition + Metabolic',
+    title: 'Nutrition',
     value: 86,
     label: 'Nutrition score',
     score: 1,
@@ -342,6 +395,18 @@ export const METRICS = [
       { title: 'Biomarkers', value: '9', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
       { title: 'Glucose', value: '88', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
     ],
+    healthRecommendation: {
+      paragraphs: [
+        'Your Nutrition & Metabolic Health score is currently low, indicating that your body may be under strain in maintaining stable metabolic function. At this time, none of the tracked indicators are performing at an optimal level, and several biomarkers fall outside the recommended range. This suggests potential inconsistencies in factors such as nutrition, blood sugar regulation, or energy balance.',
+        'Your Nutrition & Metabolic Health score is currently low, indicating that your body may be under strain in maintaining stable metabolic function. At this time, none of the tracked indicators are performing at an optimal level, and several biomarkers fall outside the recommended range. This suggests potential inconsistencies in factors such as nutrition, blood sugar regulation, or energy balance.',
+      ],
+      modalSubtitle: 'Nutrition & Metabolic Health: areas to address',
+      modalContent: [
+        'Your Nutrition & Metabolic Health score is currently low, indicating that your body may be under strain in maintaining stable metabolic function. At this time, none of the tracked indicators are performing at an optimal level, and several biomarkers fall outside the recommended range. This suggests potential inconsistencies in factors such as nutrition, blood sugar regulation, or energy balance.',
+        'Work with your clinician to interpret these results in the context of your full history and goals.',
+        'Retesting on the schedule your care team recommends helps confirm trends and adjust your plan.',
+      ],
+    },
   },
   {
     id: 11,
@@ -376,6 +441,10 @@ export const METRICS = [
       { title: 'Liver Enzymes', value: '42', subtitle: 'Needs Attention', badge: 'Out of Range', type: 'warning' },
       { title: 'Heavy Metals', value: '1.2', subtitle: 'Needs Immediate Attention', badge: 'Low', type: 'danger' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Detoxification score reflects how liver handling and exposure-related burden may be influencing wellness. Out-of-range markers may warrant discussion of environment, diet, and organ function with your care team.',
+      'Detoxification: clearance and exposure',
+    ),
   },
   {
     id: 12,
@@ -410,23 +479,185 @@ export const METRICS = [
       { title: 'Microbiome', value: '10', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
       { title: 'Inflammation', value: '0.4', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
     ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Gut Health score reflects how digestion, barrier function, and inflammation signals are tracking. When indicators are not in the optimal band, it may suggest microbiome or digestive patterns to explore with your clinician.',
+      'Gut Health: digestive balance',
+    ),
+  },
+  {
+    id: 13,
+    slug: 'metabolic',
+    title: 'Metabolic Health',
+    value: 78,
+    label: 'Metabolic score',
+    score: 1,
+    icon: 'metabolic',
+    iconBg: '#EA580C',
+    chartType: 'line',
+    chartData: [68, 70, 72, 71, 74, 75, 76, 77, 78, 78],
+    detailStats: [
+      { label: 'HbA1c', value: '5.2', unit: '%' },
+      { label: 'Fasting Glucose', value: '88', unit: 'mg/dL' },
+    ],
+    detailChart: {
+      months: MONTHS,
+      optimal: [31, 34, 36, 39, 43, 41, 45, 47, 49],
+      warning: [10, 12, 15, 18, 22, 18, 16, 18, 14],
+      critical: [4, 6, 8, 11, 15, 10, 8, 9, 6],
+      optimalThreshold: 52,
+      criticalThreshold: 78,
+    },
+    summary: SUMMARY,
+    finalScore: 78,
+    finalScoreSubtitle: 'Across 3 indicators',
+    questionnaires: 6,
+    questionnairesSubtitle: 'Good Reading',
+    statusItems: [
+      { title: 'Questionnaires', value: '6', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
+      { title: 'Biomarkers', value: '7', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
+      { title: 'Glucose', value: '88', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
+    ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Metabolic Health score reflects how blood sugar control, lipids, and energy regulation are tracking. Several markers outside the recommended range may indicate metabolic strain worth addressing through nutrition, activity, and medical follow-up.',
+      'Metabolic Health: regulation',
+    ),
+  },
+  {
+    id: 14,
+    slug: 'toxin-exposure',
+    title: 'Toxin Exposure',
+    value: 54,
+    label: 'Exposure score',
+    score: 1,
+    icon: 'toxin-exposure',
+    iconBg: '#0D9488',
+    chartType: 'line',
+    chartData: [48, 50, 51, 52, 53, 52, 53, 54, 54, 54],
+    detailStats: [
+      { label: 'Heavy Metals', value: '1.1', unit: 'mcg/L' },
+      { label: 'Pesticides', value: 'Low', unit: '' },
+    ],
+    detailChart: {
+      months: MONTHS,
+      optimal: [28, 31, 34, 37, 41, 39, 43, 45, 47],
+      warning: [14, 16, 18, 22, 25, 20, 18, 20, 16],
+      critical: [8, 10, 11, 14, 18, 12, 9, 10, 8],
+      optimalThreshold: 50,
+      criticalThreshold: 75,
+    },
+    summary: SUMMARY,
+    finalScore: 54,
+    finalScoreSubtitle: 'Across 2 indicators',
+    questionnaires: 4,
+    questionnairesSubtitle: 'Average Reading',
+    statusItems: [
+      { title: 'Questionnaires', value: '4', subtitle: 'Average Reading', badge: 'In Range', type: 'success' },
+      { title: 'Biomarkers', value: '3', subtitle: 'Needs Attention', badge: 'Out of Range', type: 'warning' },
+      { title: 'Exposure Index', value: '5', subtitle: 'Average Reading', badge: 'In Range', type: 'success' },
+    ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Toxin Exposure score summarizes environmental and clearance-related signals. When indicators are suboptimal, it may reflect exposure burden or clearance limits that your care team can help contextualize and reduce over time.',
+      'Toxin Exposure: burden and clearance',
+    ),
+  },
+  {
+    id: 15,
+    slug: 'liver-kidney',
+    title: 'Liver and Kidney Health',
+    value: 71,
+    label: 'Organ health score',
+    score: 1,
+    icon: 'liver-kidney',
+    iconBg: '#7C3AED',
+    chartType: 'line',
+    chartData: [62, 64, 65, 66, 67, 68, 69, 70, 71, 71],
+    detailStats: [
+      { label: 'ALT', value: '28', unit: 'U/L' },
+      { label: 'eGFR', value: '88', unit: 'mL/min' },
+    ],
+    detailChart: {
+      months: MONTHS,
+      optimal: [32, 34, 36, 39, 42, 41, 44, 46, 48],
+      warning: [11, 13, 16, 20, 24, 19, 17, 18, 15],
+      critical: [4, 7, 9, 12, 16, 11, 8, 9, 6],
+      optimalThreshold: 50,
+      criticalThreshold: 76,
+    },
+    summary: SUMMARY,
+    finalScore: 71,
+    finalScoreSubtitle: 'Across 3 indicators',
+    questionnaires: 5,
+    questionnairesSubtitle: 'Good Reading',
+    statusItems: [
+      { title: 'Questionnaires', value: '5', subtitle: 'Good Reading', badge: 'In Range', type: 'success' },
+      { title: 'Liver Enzymes', value: '28', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
+      { title: 'Kidney Function', value: '88', subtitle: 'Optimal Reading', badge: 'In Range', type: 'success' },
+    ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Liver and Kidney Health score reflects how filtration, enzymes, and clearance are performing. Several biomarkers outside the optimal range may signal organ stress, hydration, or medication factors to review with your clinician.',
+      'Liver and Kidney Health: organ function',
+    ),
+  },
+  {
+    id: 16,
+    slug: 'inflammation',
+    title: 'Inflammation',
+    value: 58,
+    label: 'Inflammation score',
+    score: 1,
+    icon: 'inflammation',
+    iconBg: '#DC2626',
+    chartType: 'line',
+    chartData: [52, 53, 54, 55, 56, 56, 57, 57, 58, 58],
+    detailStats: [
+      { label: 'hs-CRP', value: '1.2', unit: 'mg/L' },
+      { label: 'ESR', value: '8', unit: 'mm/hr' },
+    ],
+    detailChart: {
+      months: MONTHS,
+      optimal: [30, 32, 35, 38, 42, 40, 44, 46, 48],
+      warning: [12, 15, 18, 22, 25, 20, 18, 20, 16],
+      critical: [5, 8, 10, 14, 18, 12, 8, 10, 6],
+      optimalThreshold: 50,
+      criticalThreshold: 75,
+    },
+    summary: SUMMARY,
+    finalScore: 58,
+    finalScoreSubtitle: 'Across 2 indicators',
+    questionnaires: 4,
+    questionnairesSubtitle: 'Average Reading',
+    statusItems: [
+      { title: 'Questionnaires', value: '4', subtitle: 'Average Reading', badge: 'In Range', type: 'success' },
+      { title: 'Biomarkers', value: '5', subtitle: 'Needs Attention', badge: 'Out of Range', type: 'warning' },
+      { title: 'CRP', value: '1.2', subtitle: 'Average Reading', badge: 'In Range', type: 'success' },
+    ],
+    healthRecommendation: healthRecommendationFromBody(
+      'Your Inflammation score reflects systemic inflammatory signals from your labs. When multiple markers are elevated or suboptimal, it may point to stress, recovery, or underlying drivers that merit coordinated follow-up.',
+      'Inflammation: systemic signals',
+    ),
   },
 ];
 
+export const METRICS = METRICS_DATA.map((m) => ({
+  ...m,
+  scoringSection: SCORING_SECTIONS_BY_SLUG[m.slug],
+  biomarkerWearableSection: BIOMARKER_WEARABLE_SECTIONS_BY_SLUG[m.slug],
+}));
+
 export const HEALTH_AREAS = [
-  { id: "nutrition", label: "Nutrition + Metabolic", value: 86, icon: "nutrition", color: "#A855F7" },
-  { id: "hormone", label: "Hormone Health", value: 30, icon: "hormone-health", color: "#E71590" },
-  { id: "movement", label: "Weekly activity balance", value: 78, icon: "movement", color: "#16A34A" },
-  { id: "brain", label: "Mental clarity", value: 44, icon: "brain-health", color: "#DE2ED7" },
-  { id: "recovery", label: "Recovery efficiency", value: 84, icon: "recovery", color: "#3F54E4" },
-  { id: "cardio", label: "Cardiovascular efficiency", value: 88, icon: "heart-health", color: "#DC2626" },
-  { id: "detoxification", label: "Detoxification", value: 32, icon: "detoxification", color: "#15803D" },
-  { id: "immune", label: "Immune system", value: 48, icon: "immune-health", color: "#00ADEF" },
-  { id: "stress", label: "Emotional Health + Stress", value: 74, icon: "emotional-health", color: "#F97316" },
-  { id: "regen", label: "Regenerative Medicine", value: 70, icon: "regenerative-medicine", color: "#FF3083" },
-  { id: "gut", label: "Gut Health", value: 96, icon: "gut-health", color: "#7F1D1D" },
-  { id: "long-term", label: "Long-term health outlook", value: 92, icon: "longevity", color: "#7BC31B" },
-  { id: "sleep", label: "Sleep quality", value: 66, icon: "recovery", color: "#8B5CF6" },
-  { id: "hydration", label: "Hydration balance", value: 58, icon: "nutrition", color: "#06B6D4" },
-  { id: "metabolic-flex", label: "Metabolic flexibility", value: 81, icon: "movement", color: "#84CC16" },
+  { id: 'nutrition', label: 'Nutrition', value: 71, icon: 'nutrition', color: '#F97316' },
+  { id: 'metabolic', label: 'Metabolic Health', value: 70, icon: 'metabolic', color: '#F59E0B' },
+  { id: 'sleep-recovery', label: 'Sleep + Recovery', value: 74, icon: 'recovery', color: '#EAB308' },
+  { id: 'movement', label: 'Physical Fitness', value: 65, icon: 'movement', color: '#84CC16' },
+  { id: 'emotional', label: 'Emotional Health', value: 38, icon: 'emotional-health', color: '#22C55E' },
+  { id: 'toxin-exposure', label: 'Toxin Exposure', value: 42, icon: 'toxin-exposure', color: '#38BDF8' },
+  { id: 'liver-kidney', label: 'Liver + Kidney Health', value: 60, icon: 'liver-kidney', color: '#3B82F6' },
+  { id: 'hormone', label: 'Hormone Health', value: 71, icon: 'hormone-health', color: '#1E40AF' },
+  { id: 'gut', label: 'Gut Health', value: 88, icon: 'gut-health', color: '#9333EA' },
+  { id: 'inflammation', label: 'Inflammation', value: 55, icon: 'inflammation', color: '#D946EF' },
+  { id: 'immune', label: 'Immune Health', value: 69, icon: 'immune-health', color: '#EC4899' },
+  { id: 'heart', label: 'CV (Heart) Health', value: 90, icon: 'heart-health', color: '#F43F5E' },
+  { id: 'cancer', label: 'Cancer Prevention', value: 62, icon: 'regenerative-medicine', color: '#EF4444' },
+  { id: 'brain', label: 'Brain Health', value: 77, icon: 'brain-health', color: '#FB923C' },
+  { id: 'longevity', label: 'Longevity', value: 73, icon: 'longevity', color: '#EA580C' },
 ];

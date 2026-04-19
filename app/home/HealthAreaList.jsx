@@ -21,7 +21,7 @@ function HealthAreaList({ items = [] }) {
   );
 
   return (
-    <div className="grid flex-1 grid-cols-1 gap-y-4 gap-x-24 md:grid-cols-2">
+    <div className="grid flex-1 grid-cols-1 gap-y-4 gap-x-24 md:grid-cols-3">
       {items.map(renderItem)}
     </div>
   );
