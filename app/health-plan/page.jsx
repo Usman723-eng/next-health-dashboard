@@ -71,7 +71,7 @@ export default function HealthPlanPage() {
     <>
       <main className="flex flex-col gap-4 px-6 py-5">
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-semibold leading-[1.58] text-primary">All Pinned</h2>
+          <h2 className="text-2xl font-semibold leading-9.5 text-primary">All Pinned</h2>
           <DndContext
             id="dnd-health-plan-pinned"
             sensors={sensors}
@@ -99,7 +99,7 @@ export default function HealthPlanPage() {
           </DndContext>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-semibold leading-[1.58] text-primary">All Recommendation</h2>
+          <h2 className="text-2xl font-semibold leading-9.5 text-primary">All Recommendation</h2>
           <DndContext
             id="dnd-health-plan-recommended"
             sensors={sensors}

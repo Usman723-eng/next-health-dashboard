@@ -11,15 +11,6 @@ const DEFAULT_CHART_GRID = {
   dash: [4, 4],
 };
 
-/**
- * Metric card for the Devices dashboard: title, source, biomarker-style time tabs, and {@link DeviceMetricLineChart}.
- *
- * @param {object} props
- * @param {'weight'|'bodyFat'|'systolicBp'|'bloodOxygen'} props.cardId
- * @param {string} props.title
- * @param {string} props.source
- * @param {{ horizontal?: boolean, vertical?: boolean, color?: string, dash?: number[] }} [props.chartGrid] Passed only to DeviceMetricLineChart; does not affect other charts.
- */
 export default function DeviceMetricCard({ cardId, title, source, chartGrid }) {
   const [timeRangeIndex, setTimeRangeIndex] = useState(0);
 
@@ -29,13 +20,12 @@ export default function DeviceMetricCard({ cardId, title, source, chartGrid }) {
   );
 
   const grid = chartGrid ?? DEFAULT_CHART_GRID;
-
   return (
-    <div className="flex flex-col gap-3 rounded-3xl border border-border2 bg-surface p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-body-size font-semibold leading-6 text-primary">{title}</h3>
-          <p className="text-secondary-size leading-5 text-secondary">Source: {source}</p>
+    <div className="flex flex-col gap-8 rounded-xl border border-border2 bg-surface px-4 pt-6 pb-13">
+      <div className="flex justify-between gap-3">
+        <div className="flex flex-col gap-2">
+          <h3 className="text-body-size font-bold leading-6 text-primary">{title}</h3>
+          <p className="text-secondary-size leading-4.5 text-primary">Source: {source}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1 self-start rounded-xl bg-gray-100 p-0.75 sm:ml-2">
           {TIME_RANGE_TABS.map((tab, i) => (
@@ -58,7 +48,7 @@ export default function DeviceMetricCard({ cardId, title, source, chartGrid }) {
           ))}
         </div>
       </div>
-      <div className="h-56 min-h-[14rem] w-full sm:h-66.5">
+      <div className="h-70 w-full">
         <DeviceMetricLineChart
           xLabels={series.xLabels}
           values={series.values}

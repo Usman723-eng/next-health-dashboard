@@ -78,6 +78,9 @@ import RecordsEye from '@/public/assets/Eye-icon.svg';
 import RecordsClock from '@/public/assets/Clock-icon.svg';
 import RecordsDownload from '@/public/assets/DownloadSimple-icon.svg';
 import RecordsTrash from '@/public/assets/Trash-icon.svg';
+import ChartLineTab from '@/public/assets/line-chart-icon.svg';
+import ChartBarTab from '@/public/assets/bar-chart-icon.svg';
+import TrendUp from '@/public/assets/trend-up.svg';
 
 const icons = {
   'biomarkers-black': BiomarkersBlack,
@@ -161,6 +164,9 @@ const icons = {
   'records-download': RecordsDownload,
   'records-trash': RecordsTrash,
   'records-ask-ai': WearableAi,
+  'chart-line': ChartLineTab,
+  'chart-bar': ChartBarTab,
+  'trend-up': TrendUp,
 };
 
 export default function Icon({ name, size = 24, color = 'currentColor', fill = 'none', className = '' }) {

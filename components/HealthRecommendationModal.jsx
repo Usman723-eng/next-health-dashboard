@@ -8,7 +8,7 @@ function ActionButton({ children, className = '', ...props }) {
   return (
     <button
       type="button"
-      className={`inline-flex h-9 items-center justify-center rounded-2xl px-4 text-base font-medium leading-4 cursor-pointer transition-opacity hover:opacity-90 ${className}`}
+      className={`inline-flex h-9 items-center justify-center rounded-2xl px-4 text-base font-medium leading-5 cursor-pointer transition-opacity hover:opacity-90 ${className}`}
       {...props}
     >
       {children}
@@ -44,24 +44,24 @@ export default function HealthRecommendationModal({
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className={`fixed inset-0 z-[220] flex items-center justify-center p-4 ${className}`}>
+    <div className={`fixed inset-0 z-220 flex items-center justify-center p-10 ${className}`}>
       <button
         type="button"
         aria-label="Dismiss"
-        className="absolute inset-0 cursor-pointer bg-black/30"
+        className="absolute inset-0 cursor-pointer bg-black/50"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex max-h-[92vh] w-full max-w-[1400px] flex-col overflow-hidden rounded-3xl border border-border2 bg-surface"
+        className="relative flex flex-col gap-4 max-h-full w-full max-w-250 overflow-y-auto rounded-3xl border border-border2 bg-surface p-8"
       >
-        <div className="flex items-center justify-between gap-4 border-b border-border2 px-8 py-4">
-          <h2 id={titleId} className="text-[22px] font-semibold leading-[26px] text-primary">
+        <div className="flex items-center justify-between gap-4">
+          <h2 id={titleId} className="text-[22px] font-semibold leading-6.5 text-primary">
             {title}
           </h2>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <ActionButton className="bg-[#F5F5F5] text-[#171717]">Download</ActionButton>
             <ActionButton className="gap-1.5 border border-[#4818AF80] bg-[#E2D7FA] text-[#4818AF]">
               <Icon name="wearable-ai" size={16} color="currentColor" fill="none" />
@@ -69,25 +69,26 @@ export default function HealthRecommendationModal({
             </ActionButton>
           </div>
         </div>
-
-        <div className="overflow-y-auto px-8 py-4">
-          <div className="inline-flex items-center rounded-md bg-[#FFF4DF] px-2 py-0.5 text-[10.5px] font-medium leading-[100%] text-[#BD6600]">
+        <div className='flex'>
+          <span className="inline-flex items-center rounded-md bg-[#FFF4E2] px-2 py-0.5 text-[10.5px] font-medium leading-[100%] text-[#BD6600]">
             ✦ {badgeText}
-          </div>
-          {subtitle ? (
-            <h3 className="mt-4 text-base font-semibold leading-[140%] text-[#181818]">{subtitle}</h3>
-          ) : null}
-          <div className="mt-3 flex flex-col gap-2.5">
-            {content.map((block, idx) => (
-              <p key={idx} className="text-[13px] font-normal leading-[155%] text-[#2E2E2E]">
-                {block}
-              </p>
-            ))}
-          </div>
+          </span>
+        </div>
+        {subtitle ? (
+          <h3 className="text-base font-semibold leading-[140%] text-[#181818]">{subtitle}</h3>
+        ) : null}
+        <div className="flex flex-col gap-3">
+          {content.map((block, idx) => (
+            <p key={idx} className="text-[13px] font-normal leading-[155%] text-[#2E2E2E]">
+              {block}
+            </p>
+          ))}
+        </div>
+        <div className='flex'>
           <button
             type="button"
             onClick={onClose}
-            className="mt-3 text-sm font-semibold leading-5 text-primary cursor-pointer"
+            className="text-sm font-semibold leading-5 text-primary cursor-pointer"
           >
             Show less
           </button>

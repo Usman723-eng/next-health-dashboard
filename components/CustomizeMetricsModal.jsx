@@ -4,10 +4,6 @@ import { useEffect, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/icons';
 
-/** @typedef {{ id: string, label: string, defaultChecked?: boolean }} MetricItem */
-/** @typedef {{ category: string, items: MetricItem[] }} MetricGroup */
-
-/** @type {Record<string, { left: MetricGroup[], right: MetricGroup[] }>} */
 const METRICS_CONFIG = {
   withings: {
     left: [
@@ -82,7 +78,6 @@ const METRICS_CONFIG = {
 };
 
 function buildInitialState(config) {
-  /** @type {Record<string, boolean>} */
   const next = {};
   for (const col of ['left', 'right']) {
     for (const group of config[col]) {
@@ -96,17 +91,17 @@ function buildInitialState(config) {
 
 function MetricColumn({ groups, checked, onToggle }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {groups.map((group) => (
-        <div key={group.category}>
-          <h3 className="mb-2 text-sm font-bold leading-5 text-primary">{group.category}</h3>
+        <div key={group.category} className='flex flex-col gap-3'>
+          <h3 className="text-lg font-bold leading-5.5 text-primary">{group.category}</h3>
           <ul className="flex flex-col gap-2">
             {group.items.map((item) => (
               <li key={item.id}>
-                <label className="flex cursor-pointer items-center gap-2.5 text-sm font-normal leading-5 text-primary">
+                <label className="flex cursor-pointer items-center gap-2 text-base font-normal leading-5 text-primary">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 shrink-0 rounded border-border2 accent-[#2563EB]"
+                    className="h-5 w-5 shrink-0 rounded-md border-border border accent-[#192845]"
                     checked={checked[item.id] ?? false}
                     onChange={() => onToggle(item.id)}
                   />
@@ -159,25 +154,25 @@ export default function CustomizeMetricsModal({
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-220 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-220 flex items-center justify-center p-10">
       <button
         type="button"
         aria-label="Dismiss"
-        className="absolute inset-0 cursor-pointer bg-black/30"
+        className="absolute inset-0 cursor-pointer bg-black/50"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-border2 bg-surface shadow-lg"
+        className="relative flex max-h-full w-full max-w-208 flex-col overflow-hidden rounded-3xl border border-border2 bg-surface shadow-lg"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-border2 px-6 py-5">
-          <div className="flex min-w-0 flex-col gap-1">
-            <h2 id={titleId} className="text-[22px] font-semibold leading-7 text-primary">
+        <div className="flex justify-between gap-4 border-b border-border2 px-6 py-4">
+          <div className="flex flex-col gap-1">
+            <h2 id={titleId} className="text-xl font-bold leading-6 text-primary">
               Customize {deviceName} Metrics
             </h2>
-            <p className="text-secondary-size leading-5 text-secondary">
+            <p className="text-secondary-size leading-4.5 text-primary">
               Swap one displayed metric with another available metric.
             </p>
           </div>
@@ -190,26 +185,24 @@ export default function CustomizeMetricsModal({
             <Icon name="ai-chat-close" size={32} color="currentColor" fill="none" />
           </button>
         </div>
-
-        <div className="overflow-y-auto px-6 py-6">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
+        <div className="overflow-y-auto px-16 py-10">
+          <div className="grid grid-cols-2 gap-10">
             <MetricColumn groups={config.left} checked={checked} onToggle={handleToggle} />
             <MetricColumn groups={config.right} checked={checked} onToggle={handleToggle} />
           </div>
         </div>
-
-        <div className="flex justify-end gap-3 border-t border-border2 px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-border2 px-6 py-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-border2 bg-surface px-5 py-2.5 text-sm font-medium leading-none text-primary transition-colors hover:bg-gray-50"
+            className="rounded-md border border-border2 bg-surface px-5 py-2.5 text-sm font-medium leading-5 cursor-pointer text-primary transition-colors hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleApply}
-            className="cursor-pointer rounded-xl bg-black px-5 py-2.5 text-sm font-medium leading-none text-white transition-opacity hover:opacity-90"
+            className="cursor-pointer rounded-md bg-black px-5 py-2.5 text-sm font-medium leading-5 text-white transition-opacity hover:opacity-90"
           >
             Apply
           </button>

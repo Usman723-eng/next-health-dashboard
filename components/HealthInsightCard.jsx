@@ -34,10 +34,10 @@ export default function HealthInsightCard({
 
   return (
     <article
-      className={`flex flex-col gap-3 rounded-3xl border border-[#D1D1D1] bg-white px-6 py-4 shadow-xs ${className}`.trim()}
+      className={`flex flex-col gap-3 rounded-3xl border border-border2 bg-surface px-6 py-4 ${className}`.trim()}
     >
       <div className="flex items-start justify-between gap-4">
-        <h2 className="min-w-0 flex-1 text-[22px] font-semibold leading-[1.18] text-primary">{title}</h2>
+        <h2 className="flex-1 text-[22px] font-semibold leading-6.5 text-primary">{title}</h2>
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
@@ -49,11 +49,7 @@ export default function HealthInsightCard({
           </button>
           <button
             type="button"
-            className="flex h-6 cursor-pointer items-center justify-center rounded-md border px-2 py-1 transition-colors hover:opacity-90"
-            style={{
-              backgroundColor: '#E2D7FA',
-              borderColor: 'rgba(72, 24, 175, 0.50)',
-            }}
+            className="flex h-6 cursor-pointer items-center justify-center rounded-md border border-[#4818AF]/50 bg-[#E2D7FA] px-2 py-1 transition-colors hover:opacity-90"
             aria-label="AI insights"
             onClick={onAiClick}
           >
@@ -61,18 +57,16 @@ export default function HealthInsightCard({
           </button>
         </div>
       </div>
-
       <div
         id={contentId}
-        className={`flex flex-col gap-3 text-sm leading-[1.21] text-[#1C1917] ${singleParaClamp ? 'line-clamp-6' : ''}`}
+        className={`flex flex-col gap-2 ${singleParaClamp ? 'line-clamp-6' : ''}`}
       >
         {visibleParas.map((p, i) => (
-          <p key={i}>{p}</p>
+          <p key={i} className='text-sm text-primary'>{p}</p>
         ))}
       </div>
-
       {needsToggle && (
-        <div className="flex justify-end">
+        <div className="flex">
           <button
             type="button"
             onClick={() => setExpanded((e) => !e)}
@@ -84,12 +78,11 @@ export default function HealthInsightCard({
           </button>
         </div>
       )}
-
-      <div className="flex flex-wrap gap-2 pt-1">
+      <div className="flex flex-wrap gap-2">
         {(tags ?? []).map((tag) => (
           <span
             key={tag}
-            className="inline-flex h-5 items-center rounded-full bg-[#F2F5F9] px-2 text-xs font-medium leading-none text-[#384151]"
+            className="inline-flex h-5 items-center rounded-full bg-[#F2F5F9] px-2 text-xs font-medium leading-5 text-[#384151]"
           >
             {tag}
           </span>

@@ -8,18 +8,18 @@ export default function BiomarkerDescriptionCard({
 }) {
   return (
     <div
-      className={`flex flex-col gap-4 rounded-3xl border border-border2 bg-surface py-4 px-6 ${className}`}
+      className={`flex flex-col gap-4 rounded-2xl border border-border2 bg-surface py-4 px-6 ${className}`}
     >
       <h2 className="text-[22px] font-semibold leading-6.5 text-primary">{heading}</h2>
       {body ? (
-        <p className="text-sm font-normal leading-[155%] text-[#1C1917]">{body}</p>
+        <p className="text-sm font-normal text-primary">{body}</p>
       ) : null}
       {tags.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           {tags.map((t) => (
             <span
               key={t}
-              className="inline-flex items-center rounded-full bg-[#F5F5F5] px-3 py-1.5 text-secondary-size font-medium leading-4 text-[#57534E]"
+              className="inline-flex items-center rounded-full bg-[#F2F5F9] px-2 text-xs font-medium leading-5 text-[#384151]"
             >
               {t}
             </span>

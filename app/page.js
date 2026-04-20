@@ -139,8 +139,11 @@ export default function Home() {
   );
 
   return (
-    <main className="flex flex-col pb-6">
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5 px-6 pt-4.25">
+    <main className="flex flex-col gap-6 p-6">
+      <h1 className="text-section-size font-semibold leading-9 text-primary">
+        Today is going to be a great day, Darshan!
+      </h1>
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5">
         {SUMMARY_STATS.map((row) => (
           <SummaryStatCard
             key={row.key}
@@ -162,22 +165,13 @@ export default function Home() {
           variant="orange"
         />
       </div>
-      <div className="px-6 mt-3.75 mb-4.25">
-        <div className="flex flex-col gap-27 lg:flex-row lg:items-center rounded-3xl border border-border2 bg-surface py-10.25 px-15.25">
-          <div className="flex justify-center lg:justify-start">
-            <PolarAreaChart items={HEALTH_AREAS} score={overallAverage} />
-          </div>
-          <HealthAreaList items={HEALTH_AREAS} />
+      <div className="flex flex-col gap-27 lg:flex-row lg:items-center rounded-3xl border border-border2 bg-surface py-10.25 px-15.25">
+        <div className="flex justify-center lg:justify-start">
+          <PolarAreaChart items={HEALTH_AREAS} score={overallAverage} />
         </div>
+        <HealthAreaList items={HEALTH_AREAS} />
       </div>
-      {/* <div className="grid grid-cols-3 gap-4 px-6">
-        {METRICS.map(metric => (
-          <Link key={metric.id} href={`/biomarkers/${metric.slug}`} className="block">
-            <MetricsCard2 {...metric} />
-          </Link>
-        ))}
-      </div> */}
-      <section className="flex flex-col gap-4 px-6">
+      <div className="flex flex-col gap-4">
         <h2 className="text-section-size font-semibold leading-9 text-primary">
           Scoring
         </h2>
@@ -193,8 +187,8 @@ export default function Home() {
             />
           ))}
         </div>
-      </section>
-      <section className="flex flex-col gap-4 px-6 my-5.75">
+      </div>
+      <div className="flex flex-col gap-4">
         <h2 className="text-section-size font-semibold leading-9 text-primary">
           Pinned
         </h2>
@@ -215,8 +209,8 @@ export default function Home() {
             />
           ))}
         </div>
-      </section>
-      <section className="flex flex-col gap-4 px-6">
+      </div>
+      <div className="flex flex-col gap-4">
         <h2 className="text-section-size font-semibold leading-9 text-primary">
           Wearables
         </h2>
@@ -237,7 +231,7 @@ export default function Home() {
             />
           ))}
         </div>
-      </section>
+      </div>
       <AIChatModal open={aiChatOpen} onClose={() => setAiChatOpen(false)} />
     </main>
   );

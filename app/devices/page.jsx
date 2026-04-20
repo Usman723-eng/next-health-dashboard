@@ -35,29 +35,29 @@ export default function DevicesPage() {
 
   return (
     <main className="flex flex-col gap-6 px-6 py-5">
-      <div className="flex items-center justify-between gap-4 rounded-3xl border border-border2 bg-surface p-4">
-        <div className="flex min-w-0 flex-col gap-1.5">
+      <div className="flex items-center justify-between gap-4 rounded-xl border border-border2 bg-surface p-4">
+        <div className="flex flex-col">
           <h1 className="text-section-size font-semibold leading-9 text-primary">Devices</h1>
-          <p className="text-secondary-size font-normal leading-5 text-secondary">
+          <p className="text-[18px] font-normal leading-9 text-primary">
             Connect your devices to visualize sleep, activity, and recovery trends.
           </p>
         </div>
         <button
           type="button"
-          className="shrink-0 cursor-pointer rounded-full bg-black px-5 py-2.5 text-sm font-medium leading-none text-white transition-opacity hover:opacity-90"
+          className="shrink-0 cursor-pointer rounded-2xl bg-black px-6 py-3 text-base font-medium leading-5 text-white transition-opacity hover:opacity-90"
         >
           Connect Devices
         </button>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <div className="flex items-stretch gap-1 max-w-163 w-full rounded-xl bg-tertiary-color/12 p-0.5">
+        <div className="flex items-stretch gap-1 max-w-163 w-full rounded-md bg-tertiary-color/12 p-0.5">
           {DEVICE_TABS.map((tab, i) => (
             <button
               key={tab}
               type="button"
               onClick={() => setActiveTabIndex(i)}
               className={`
-                flex-1 cursor-pointer rounded-xl px-3 py-2 text-secondary-size leading-5 transition-all w-full
+                flex-1 cursor-pointer rounded-md px-3 py-1.75 text-secondary-size leading-4.5 transition-all w-full
                 ${activeTabIndex === i ? 'font-semibold' : 'font-medium'}
               `}
               style={
@@ -82,16 +82,16 @@ export default function DevicesPage() {
               key={source.id}
               className="flex items-center justify-between gap-4 w-full rounded-2xl border border-border2 bg-surface p-4"
             >
-              <div className="flex flex-col gap-1">
-                <h2 className="text-card-header-size font-semibold leading-[100%] text-primary">{source.name}</h2>
-                <p className="text-secondary-size leading-5 text-secondary">
+              <div className="flex flex-col">
+                <h2 className="text-card-header-size font-semibold leading-9 text-primary">{source.name}</h2>
+                <p className="text-secondary-size leading-9 text-primary">
                   {source.connectedCount} connected source{source.connectedCount === 1 ? '' : 's'}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
-                  className="rounded-full border border-border2 bg-[#F4F4F5] px-4 py-2 text-sm font-medium leading-none text-primary cursor-pointer transition-colors hover:bg-[#E4E4E7]"
+                  className="rounded-2xl bg-surface-secondary px-4 py-2 text-base font-medium leading-5 text-primary cursor-pointer transition-colors hover:bg-[#E4E4E7]"
                 >
                   Disconnect
                 </button>
@@ -102,7 +102,7 @@ export default function DevicesPage() {
                     setCustomizeModalKey((n) => n + 1);
                     setCustomizeOpen(true);
                   }}
-                  className="inline-flex items-center gap-2 rounded-full border border-border2 bg-[#F4F4F5] px-4 py-2 text-sm font-medium leading-none text-primary cursor-pointer transition-colors hover:bg-[#E4E4E7]"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-surface-secondary px-4 py-2 text-base font-medium leading-5 text-primary cursor-pointer transition-colors hover:bg-[#E4E4E7]"
                 >
                   <Icon name="customize-setting" size={16} color="currentColor" fill="none" />
                   Customize

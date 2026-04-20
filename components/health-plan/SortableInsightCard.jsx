@@ -21,7 +21,7 @@ export default function SortableInsightCard({ id, ...cardProps }) {
     <div ref={setNodeRef} style={style} className="relative pl-5">
       <button
         type="button"
-        className="flex h-10 w-10 absolute top-1/2 -translate-y-1/2 left-0 shrink-0 cursor-pointer cursor-grab touch-none items-center justify-center rounded-md border border-transparent text-[#9CA3AF] transition-colors hover:border-border2 hover:bg-gray-50 hover:text-primary active:cursor-grabbing"
+        className="flex h-10 w-10 absolute top-1/2 -translate-y-1/2 left-0 shrink-0 cursor-grab touch-none items-center justify-center rounded-md border border-transparent text-[#9CA3AF] transition-colors hover:border-border2 hover:bg-gray-50 hover:text-primary active:cursor-grabbing"
         aria-label="Drag to reorder"
         {...attributes}
         {...listeners}

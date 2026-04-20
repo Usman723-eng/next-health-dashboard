@@ -29,6 +29,7 @@ const MetricLineChart = dynamic(() => import('@/components/charts/MetricLineChar
 const StackedBarChart = dynamic(() => import('@/components/charts/StackedBarChart'), { ssr: false });
 
 const LINE_BAR_TABS = ['Line', 'Bar'];
+const LINE_BAR_TAB_ICONS = ['chart-line', 'chart-bar'];
 
 const HEADER_BADGE_STYLES = {
   optimal: 'border-emerald-200 bg-emerald-50 text-emerald-800',
@@ -112,8 +113,8 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
             </Link>
           ) : (
             <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-              style={{ backgroundColor: iconBg, color: '#ffffff' }}
+              className="flex h-12 w-12 text-white shrink-0 items-center justify-center rounded-full"
+              style={{ backgroundColor: iconBg }}
             >
               <Icon name={`${icon}-large`} size={36} color="currentColor" />
             </div>
@@ -125,7 +126,7 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
             ) : null}
           </div>
           <span
-            className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold leading-none ${headerBadgeClass}`}
+            className={`shrink-0 rounded-md border px-2.5 py-1 text-xs font-semibold leading-none ${headerBadgeClass}`}
           >
             {headerStatusText}
           </span>
@@ -135,9 +136,9 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
           <button
             type="button"
             onClick={() => setAiChatOpen(true)}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-2xl border border-[#4818AF80] bg-[#E2D7FA] px-3 py-2 text-sm font-medium leading-none text-[#4818AF] transition-opacity hover:opacity-90"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-2xl border border-[#4818AF80] bg-[#E2D7FA] px-3 py-2.5 text-xs font-medium leading-none text-[#4818AF] transition-opacity hover:opacity-90"
           >
-            <Icon name="wearable-ai" size={16} color="#4818AF" fill="none" />
+            <Icon name="wearable-ai" size={16} color="currentColor" fill="none" />
             Ask AI
           </button>
         </div>
@@ -230,8 +231,8 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
                     type="button"
                     onClick={() => setChartKindIndex(i)}
                     className={`
-                      px-1.5 py-1.75 rounded-xl text-secondary-size leading-4.5 cursor-pointer border-none min-w-30 transition-all
-                      ${chartKindIndex === i ? 'font-semibold' : 'font-medium'}
+                      inline-flex items-center justify-center gap-1 rounded-xl border-none px-2.75 py-1.25 text-secondary-size leading-4.5 transition-all
+                      cursor-pointer ${chartKindIndex === i ? 'font-semibold' : 'font-medium'}
                     `}
                     style={
                       chartKindIndex === i
@@ -239,7 +240,7 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
                         : { backgroundColor: 'transparent', color: 'var(--tab-text-color)' }
                     }
                   >
-                    {tab}
+                    <Icon name={LINE_BAR_TAB_ICONS[i]} size={16} color="currentColor" fill="none" />
                   </button>
                 ))}
               </div>
@@ -259,9 +260,9 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
             </div>
           )}
           {multiChartView && LINE_BAR_TABS[chartKindIndex] === 'Line' ? (
-            <div className="flex flex-wrap gap-8 border-t border-border2 pt-4">
+            <div className="flex flex-wrap gap-6 pb-3">
               {multiChartView.series.map((s) => (
-                <div key={s.label} className="flex min-w-0 flex-col gap-1">
+                <div key={s.label} className="flex min-w-41.75 flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span
                       className="h-3 w-3 shrink-0 rounded-sm"
@@ -301,14 +302,12 @@ export default function BiomarkerDetailPageView({ slug, view = 'standard' }) {
           </div>
         )}
         {multiChartView && LINE_BAR_TABS[chartKindIndex] === 'Line' ? (
-          <div className="mt-3 flex flex-col gap-1 border-t border-border2 pt-4">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-primary">
-              <span>{multiChartView.aiInsightLine}</span>
-              <span className="text-emerald-600" aria-hidden>
-                ↑
-              </span>
+          <div className="flex flex-col gap-2 pt-3">
+            <div className="flex items-center gap-2 text-primary">
+              <span className='text-sm font-medium leading-[100%]'>{multiChartView.aiInsightLine}</span>
+              <Icon name="trend-up" size={16} color="currentColor" fill="none" />
             </div>
-            <span className="text-xs leading-4 text-secondary">Ai insight</span>
+            <span className="text-sm leading-[100%] text-secondary">Ai insight</span>
           </div>
         ) : null}
       </div>

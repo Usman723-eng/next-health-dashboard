@@ -48,18 +48,16 @@ export default function BiomarkerStatusInsight({
 
   return (
     <div
-      className={`rounded-3xl border px-4 py-4 sm:px-5 sm:py-4 ${v.box} ${className}`}
+      className={`flex flex-col gap-2 rounded-2xl border px-11.5 py-4 ${v.box} ${className}`}
       role="status"
     >
-      <div className="flex items-start gap-3">
-        <span className={`mt-0.5 shrink-0 ${v.icon}`} aria-hidden>
-          <Icon name={iconName} size={22} className="block" />
-        </span>
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <p className={`text-base font-semibold leading-6 ${v.title}`}>{heading}</p>
-          <p className={`text-sm font-normal leading-[155%] ${v.body}`}>{body}</p>
+      <div className="flex items-center gap-2">
+        <div className={`flex shrink-0 ${v.icon}`} aria-hidden>
+          <Icon name={iconName} size={24} className="block" />
         </div>
+        <p className={`text-sm font-bold leading-5 ${v.title}`}>{heading}</p>
       </div>
+      <p className={`text-sm leading-5 ${v.body}`}>{body}</p>
     </div>
   );
 }

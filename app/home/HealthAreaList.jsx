@@ -16,12 +16,12 @@ function HealthAreaList({ items = [] }) {
         </div>
         <span className="text-metric-size font-normal text-primary">{item.label}</span>
       </div>
-      <span className="text-metric-size font-bold text-primary">{clampTo100(item.value)}</span>
+      <span className="text-metric-size font-bold text-primary min-w-9">{clampTo100(item.value)}</span>
     </div>
   );
 
   return (
-    <div className="grid flex-1 grid-cols-1 gap-y-4 gap-x-24 md:grid-cols-3">
+    <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-3">
       {items.map(renderItem)}
     </div>
   );
